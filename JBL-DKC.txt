@@ -1,0 +1,289 @@
+package main;
+
+import config.config;
+import java.util.Scanner;
+
+public class main {
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        config c = new config();
+        c.connectDB();
+
+        String name, email, pn;
+        int choice = 0;
+        String input;
+
+        do {
+            System.out.println("\n--- User Menu ---");
+            System.out.println("1. Enter and Insert User Details");
+            System.out.println("2. Exit");
+            System.out.print("Enter your choice (1 or 2): ");
+            input = s.nextLine(); 
+
+            if (input.matches("[0-9]+")) {  
+                choice = Integer.parseInt(input);
+            } else {
+                System.out.println("❌ Invalid input. Please enter a number (1 or 2).");
+                continue; 
+            }
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Name: ");
+                    name = s.nextLine();
+
+                    System.out.print("Enter Email: ");
+                    email = s.nextLine();
+
+                    System.out.print("Enter Phone Number: ");
+                    pn = s.nextLine();
+
+                    String sql = "INSERT INTO user_table (user_n, user_email, user_contactnum) VALUES (?, ?, ?)";
+                    c.addRecord(sql, name, email, pn);
+
+                    System.out.println("✅ User inserted successfully!");
+                    break;
+
+                case 2:
+                    System.out.println("Exiting...");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please enter 1 or 2.");
+                    break;
+            }
+        } while (choice != 2);
+
+        s.close();
+    }
+}
+
+
+
+package config;
+
+import java.sql.*;
+
+
+public class config {
+    
+    //Connection Method to SQLITE
+public static Connection connectDB() {
+        Connection con = null;
+        try {
+            Class.forName("org.sqlite.JDBC"); // Load the SQLite JDBC driver
+            con = DriverManager.getConnection("jdbc:sqlite:movie.db"); // Establish connection
+            System.out.println("Connection Successful");
+        } catch (Exception e) {
+            System.out.println("Connection Failed: " + e);
+        }
+        return con;
+    }
+
+public void addRecord(String sql, Object... values) {
+    try (Connection conn = this.connectDB(); // Use the connectDB method
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        // Loop through the values and set them in the prepared statement dynamically
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] instanceof Integer) {
+                pstmt.setInt(i + 1, (Integer) values[i]); // If the value is Integer
+            } else if (values[i] instanceof Double) {
+                pstmt.setDouble(i + 1, (Double) values[i]); // If the value is Double
+            } else if (values[i] instanceof Float) {
+                pstmt.setFloat(i + 1, (Float) values[i]); // If the value is Float
+            } else if (values[i] instanceof Long) {
+                pstmt.setLong(i + 1, (Long) values[i]); // If the value is Long
+            } else if (values[i] instanceof Boolean) {
+                pstmt.setBoolean(i + 1, (Boolean) values[i]); // If the value is Boolean
+            } else if (values[i] instanceof java.util.Date) {
+                pstmt.setDate(i + 1, new java.sql.Date(((java.util.Date) values[i]).getTime())); // If the value is Date
+            } else if (values[i] instanceof java.sql.Date) {
+                pstmt.setDate(i + 1, (java.sql.Date) values[i]); // If it's already a SQL Date
+            } else if (values[i] instanceof java.sql.Timestamp) {
+                pstmt.setTimestamp(i + 1, (java.sql.Timestamp) values[i]); // If the value is Timestamp
+            } else {
+                pstmt.setString(i + 1, values[i].toString()); // Default to String for other types
+            }
+        }
+
+        pstmt.executeUpdate();
+        System.out.println("Record added successfully!");
+    } catch (SQLException e) {
+        System.out.println("Error adding record: " + e.getMessage());
+    }
+}
+
+}
+
+
+
+
+
+
+Jaylord: 
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package config;
+
+import java.sql.*;
+
+/**
+ *
+ * @author PC 36
+ */
+public class config {
+  
+    //Connection Method to SQLITE
+public static Connection connectDB() {
+        Connection con = null;
+        try {
+            Class.forName("org.sqlite.JDBC"); // Load the SQLite JDBC driver
+            con = DriverManager.getConnection("jdbc:sqlite:BarterDB.db"); // Establish connection
+            System.out.println("Connection Successful");
+        } catch (Exception e) {
+            System.out.println("Connection Failed: " + e);
+        }
+        return con;
+    }
+
+public void addRecord(String sql, Object... values) {
+    try (Connection conn = this.connectDB(); // Use the connectDB method
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        // Loop through the values and set them in the prepared statement dynamically
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] instanceof Integer) {
+                pstmt.setInt(i + 1, (Integer) values[i]); // If the value is Integer
+            } else if (values[i] instanceof Double) {
+                pstmt.setDouble(i + 1, (Double) values[i]); // If the value is Double
+            } else if (values[i] instanceof Float) {
+                pstmt.setFloat(i + 1, (Float) values[i]); // If the value is Float
+            } else if (values[i] instanceof Long) {
+                pstmt.setLong(i + 1, (Long) values[i]); // If the value is Long
+            } else if (values[i] instanceof Boolean) {
+                pstmt.setBoolean(i + 1, (Boolean) values[i]); // If the value is Boolean
+            } else if (values[i] instanceof java.util.Date) {
+                pstmt.setDate(i + 1, new java.sql.Date(((java.util.Date) values[i]).getTime())); // If the value is Date
+            } else if (values[i] instanceof java.sql.Date) {
+                pstmt.setDate(i + 1, (java.sql.Date) values[i]); // If it's already a SQL Date
+            } else if (values[i] instanceof java.sql.Timestamp) {
+                pstmt.setTimestamp(i + 1, (java.sql.Timestamp) values[i]); // If the value is Timestamp
+            } else {
+                pstmt.setString(i + 1, values[i].toString()); // Default to String for other types
+            }
+        }
+
+        pstmt.executeUpdate();
+        System.out.println("Record added successfully!");
+    } catch (SQLException e) {
+        System.out.println("Error adding record: " + e.getMessage());
+    }
+}
+
+}
+
+
+package main;
+
+import config.config;
+import java.util.Scanner;
+
+public class main {
+
+    public static void main(String[] args) {
+        config con = new config();
+        con.connectDB();
+        Scanner scan = new Scanner(System.in);
+
+        int choice;
+
+        System.out.println("WELCOME BARTERZONE");
+        System.out.println("1. TRADERS");
+        System.out.println("2. ADMIN");
+        System.out.print("Select user: ");
+        choice = scan.nextInt();
+        scan.nextLine(); 
+        switch (choice) {
+            case 1:
+                int traderChoice;
+                System.out.println("\nTRADERS MENU");
+                System.out.println("1. Register as Trader");
+                System.out.println("2. Offer Item");
+                System.out.print("Select option: ");
+                traderChoice = scan.nextInt();
+                scan.nextLine(); 
+
+                switch (traderChoice) {
+                    case 1:
+                        
+                        System.out.println("\n--- Register Trader ---");
+
+                        System.out.print("Enter Username: ");
+                        String username = scan.nextLine();
+
+                        System.out.print("Enter Password: ");
+                        String password = scan.nextLine();
+
+                        System.out.print("Enter Full Name: ");
+                        String fullName = scan.nextLine();
+
+                        System.out.print("Enter Email: ");
+                        String email = scan.nextLine();
+
+                        System.out.print("Enter Contact: ");
+                        String contact = scan.nextLine();
+
+                        System.out.print("Enter Location: ");
+                        String location = scan.nextLine();
+
+                        String sql = "INSERT INTO tbl_traders (tbl_Username, tbl_Password, tbl_FullName, tbl_Email, tbl_Contact, tbl_Location) VALUES (?, ?, ?, ?, ?, ?)";
+                        System.out.println("✅ Trader registered successfully!");
+                       con.addRecord(sql, username, password, fullName, email, contact, location);
+                        break;
+
+                    case 2:
+                     
+                        System.out.println("\n--- Offer Item ---");
+                        
+                        System.out.print("Enter item_name: ");
+                        String item_name = scan.nextLine();
+
+                        System.out.print("Enter Brand: ");
+                        String brand = scan.nextLine();
+
+                        System.out.print("Enter Condition (new/old): ");
+                        String condition = scan.nextLine();
+
+                        System.out.print("Enter Date Bought (YYYY-MM-DD): ");
+                        String dateBought = scan.nextLine();
+
+                        System.out.print("Enter Description: ");
+                        String description = scan.nextLine();
+                      
+                        String sqloffer = "INSERT INTO tbl_items (tbl_itemName, tbl_Brand, tbl_Condition, tbl_DateBought, tbl_Description) VALUES (?, ?, ?, ?, ?)";
+                        System.out.println("✅ Item offer submitted successfully!");
+                        con.addRecord(sqloffer, item_name, brand, condition, dateBought, description);
+                        break;
+
+                    default:
+                        System.out.println("❌ Invalid Trader Option!");
+                }
+                break;
+
+            case 2:
+                System.out.println("ADMIN FUNCTIONALITY NOT IMPLEMENTED");
+                break;
+
+            default:
+                System.out.println("❌ INVALID SELECTION");
+        }
+
+        
+    }
+}
